@@ -1,7 +1,8 @@
 //-- JUMBLE VARIABLES --
 #include "RandomWordList.h"
-const int numberOfRandomWords = sizeof(randomWords) / sizeof(String);
-int currentWordIndex = numberOfRandomWords-1;
+const int numberOfRandomWords = sizeof(randomWords) / sizeof(char *);
+int currentWordIndex = numberOfRandomWords - 1;
+int wordIndex[numberOfRandomWords];
 
 String werd;
 String jumble;
@@ -32,18 +33,19 @@ void WaitForButtonPress() {
   delay(500); // ignore switch bounce
 }
 
-void SetupWords() {  
+void SetupWords() {
   //-- Convert all words to uppercase --
-  for (int i=0; i<numberOfRandomWords; i++)
-    randomWords[i].toUpperCase();
+  for (int i = 0; i < numberOfRandomWords; i++)
+    wordIndex[i] = i;
 
   //-- Scramble the sequence of words (not the words themselves) --
   randomSeed(analogRead(A1));
-  for (int i=0; i<numberOfRandomWords; i++) {
+  for (int i = 0; i < numberOfRandomWords; i++) {
     int randomWordIndex = random(numberOfRandomWords);
-    String tmp = randomWords[i];
-    randomWords[i] = randomWords[randomWordIndex];
-    randomWords[randomWordIndex] = tmp;
+    int tmp = wordIndex[i];
+    wordIndex[i] = wordIndex[randomWordIndex];
+    wordIndex[randomWordIndex] = tmp;
+    Serial.println(wordIndex[i]);
   }
 }
 
@@ -64,8 +66,8 @@ void SetupLCD() {
   lcd.clear();
   lcd.setBacklight(HIGH);
   lcd.print("* Word Jumble * ");
-  lcd.setCursor(0,1);
-  lcd.print(" by Hari Wiguna "); 
+  lcd.setCursor(0, 1);
+  lcd.print(" by Hari Wiguna ");
 
   lcd.createChar(underlineChar, underlineBitmap);
   lcd.createChar(upArrowChar, arrowBitmap);
@@ -96,8 +98,16 @@ void SwapLetters(byte index1, byte index2) {
 
 void NewGame() {
   lcd.clear();
-  werd = randomWords[currentWordIndex--];
-  if (currentWordIndex<0) currentWordIndex = numberOfRandomWords-1;
+  char buffer[20];
+  byte len = 99;
+  while (len<5 || len > 8) { // Skips words shorter than 5 or longer than 8
+    int index = wordIndex[currentWordIndex--];
+    strcpy_P(buffer, (char *)pgm_read_word(&(randomWords[index])));
+    werd = String(buffer);
+    werd.toUpperCase();
+    len = werd.length();
+    if (currentWordIndex < 0) currentWordIndex = numberOfRandomWords - 1;
+  }
   SetupJumble();
   lastKnob = -1;
 }
