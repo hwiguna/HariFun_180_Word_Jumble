@@ -1,8 +1,8 @@
 //-- JUMBLE VARIABLES --
-#include "RandomWordList.h"
-const int numberOfRandomWords = sizeof(randomWords) / sizeof(char *);
-int currentWordIndex = numberOfRandomWords - 1;
-int wordIndex[numberOfRandomWords];
+#include "WordList.h"
+const int wordCount = sizeof(wordList) / sizeof(char *);
+int currentWordIndex = wordCount - 1;
+int wordIndex[wordCount];
 
 String werd;
 String jumble;
@@ -27,21 +27,21 @@ const byte knob = A0;
 
 
 void WaitForButtonPress() {
-  while (digitalRead(4) != LOW) {
+  while (digitalRead(4) != pressedState) { // While button is NOT pressed, just wait 100 miliseconds and check again.
     delay(100);
   }
   delay(500); // ignore switch bounce
 }
 
 void SetupWords() {
-  //-- Convert all words to uppercase --
-  for (int i = 0; i < numberOfRandomWords; i++)
+  //-- Create index so we can shuffle the word list without moving them in PROGMEM --
+  for (int i = 0; i < wordCount; i++)
     wordIndex[i] = i;
 
-  //-- Scramble the sequence of words (not the words themselves) --
+  //-- Scramble the word list (not the words themselves) --
   randomSeed(analogRead(A1));
-  for (int i = 0; i < numberOfRandomWords; i++) {
-    int randomWordIndex = random(numberOfRandomWords);
+  for (int i = 0; i < wordCount; i++) {
+    int randomWordIndex = random(wordCount);
     int tmp = wordIndex[i];
     wordIndex[i] = wordIndex[randomWordIndex];
     wordIndex[randomWordIndex] = tmp;
@@ -50,9 +50,10 @@ void SetupWords() {
 }
 
 void SetupJumble() {
-  jumble = werd;
+  jumble = werd; // Start with the original unscrambled word.
   byte wordLen = jumble.length();
   for (byte i = 0; i < wordLen; i++) {
+    // For each character in the word, swap it with another character in the word
     int randomIndex = random(wordLen);
     byte tmp = jumble[i];
     jumble[i] = jumble[randomIndex];
@@ -102,11 +103,11 @@ void NewGame() {
   byte len = 99;
   while (len<5 || len > 8) { // Skips words shorter than 5 or longer than 8
     int index = wordIndex[currentWordIndex--];
-    strcpy_P(buffer, (char *)pgm_read_word(&(randomWords[index])));
+    strcpy_P(buffer, (char *)pgm_read_word(&(wordList[index])));
     werd = String(buffer);
     werd.toUpperCase();
     len = werd.length();
-    if (currentWordIndex < 0) currentWordIndex = numberOfRandomWords - 1;
+    if (currentWordIndex < 0) currentWordIndex = wordCount - 1;
   }
   SetupJumble();
   lastKnob = -1;
