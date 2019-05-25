@@ -12,7 +12,7 @@ bool lastPressState;
 //-- LCD Variables --
 #include "Wire.h"
 #include "Adafruit_LiquidCrystal.h"
-Adafruit_LiquidCrystal lcd(0);
+Adafruit_LiquidCrystal lcd(0x20);
 
 // https://www.seetron.com/apps/app_cceditor.html
 byte underlineBitmap[] = {0x9F, 0x9F, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80};
@@ -81,8 +81,19 @@ void setup() {
   Serial.begin(115200);
   SetupInputs();
   SetupLCD();
+  WaitForButtonPress();
   SetupWords();
-  NewGame();
+  NewGame(); // SampleJumbles();
+}
+
+void SampleJumbles() {
+  while (true) {
+    NewGame();
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print(jumble);
+    delay(200);
+  }
 }
 
 void SwapLetters(byte index1, byte index2) {
@@ -99,8 +110,8 @@ void SwapLetters(byte index1, byte index2) {
 void NewGame() {
   lcd.clear();
   char buffer[20];
-  byte len = 99;
-  while (len<5 || len > 8) { // Skips words shorter than 5 or longer than 8
+  byte len = 0;
+  while (len < 4 || len > 6 ) { // Skips words shorter than 5 or longer than 8
     int index = wordIndex[currentWordIndex--];
     strcpy_P(buffer, (char *)pgm_read_word(&(randomWords[index])));
     werd = String(buffer);

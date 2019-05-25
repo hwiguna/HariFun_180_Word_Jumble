@@ -10,7 +10,7 @@ int lastKnob = -1;
 //-- LCD Variables --
 #include "Wire.h"
 #include "Adafruit_LiquidCrystal.h"
-Adafruit_LiquidCrystal lcd(0);
+Adafruit_LiquidCrystal lcd(0x20);
 
 // https://www.seetron.com/apps/app_cceditor.html
 byte arrowBitmap[8] = {0x84, 0x8E, 0x9F, 0x84, 0x84, 0x84, 0x80, 0x80};

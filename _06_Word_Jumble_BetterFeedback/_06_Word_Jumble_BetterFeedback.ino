@@ -11,7 +11,7 @@ bool lastPressState;
 //-- LCD Variables --
 #include "Wire.h"
 #include "Adafruit_LiquidCrystal.h"
-Adafruit_LiquidCrystal lcd(0);
+Adafruit_LiquidCrystal lcd(0x20);
 
 // https://www.seetron.com/apps/app_cceditor.html
 byte underlineBitmap[] = {0x9F, 0x9F, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80};

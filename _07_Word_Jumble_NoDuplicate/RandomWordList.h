@@ -1,6 +1,7 @@
 //https://www.vocabulary.com/lists/558097#view=list
 //https://www.vocabulary.com/lists/194479#view=list
-const char string_1[] PROGMEM = "adversary";
+//const char string_1[] PROGMEM = "adversary";
+const char string_1[] PROGMEM = "emerge";
 const char string_2[] PROGMEM = "aplomb";
 const char string_3[] PROGMEM = "apprehensive";
 const char string_4[] PROGMEM = "aptitude";
