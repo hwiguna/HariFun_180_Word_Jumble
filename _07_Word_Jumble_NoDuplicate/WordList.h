@@ -103,7 +103,7 @@ const char string_99[] PROGMEM = "weather";
 const char string_100[] PROGMEM = "zeal";
 
 
-const char *const randomWords[] PROGMEM = {
+const char *const wordList[] PROGMEM = {
 string_1,
 string_2,
 string_3,
